@@ -11,6 +11,11 @@ V1
   - On vote button click send the vote to smart contract.
   - Once necessary event received call the vesting smart contract to reduce the cliff.
   - Update the frontend once WS receives cliff reduce event.
+
+  - Get all proposals that are currenlty live and user has not voted on.
+  - Listen for their vote event
+  - On the event trigger the frontend popup
+  - On page close close the web socket
 */
 
 export interface Proposal {

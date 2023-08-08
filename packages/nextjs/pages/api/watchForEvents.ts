@@ -15,15 +15,16 @@ type ResData = {
   message?: string;
 };
 
-const events = ["minted", "transfer", "burned"];
-type Event = typeof events;
+type Event = Array<string>;
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<ResData>) {
   if (req.method !== "POST") return res.status(404).json({ error: "request method not found" });
-  const { address }: { events: Event; address: string } = req.body;
+  const { events, address, action }: { events: Event; address: string; action: "open" | "close" } = req.body;
+
+  alchemy.ws.removeAllListeners(); // Remove any loose events to avoid duplicates.
+  if (action == "close") return res.status(200).json({ message: "Successfully closed all event listeners." });
 
   if (!events.length || !address) return res.status(400).json({ error: "invalid arguements passed" });
-  alchemy.ws.removeAllListeners(); // Remove any loose events to avoid duplicates.
 
   for (const event of events) {
     if (!event) return res.status(400).json({ error: "invalid event parameters given" });
