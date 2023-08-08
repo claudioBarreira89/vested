@@ -7,6 +7,8 @@ contract Congress {
 		uint votesInFavor;
 		uint votesAgainst;
 		bool executed;
+		uint endDate;
+		uint durationInDays;
 		mapping(address => VoteChoice) hasVoted;
 	}
 
@@ -20,13 +22,23 @@ contract Congress {
 
 	event Voted(address indexed voter, uint proposalId, VoteChoice choice);
 
-	function createProposal(string memory description) public {
+	function createProposal(
+		string memory description,
+		uint durationInDays
+	) public {
+		uint endDateTime = block.timestamp + (durationInDays * 1 days);
 		Proposal storage newProposal = proposals.push();
 		newProposal.description = description;
+		newProposal.endDate = endDateTime;
+		newProposal.durationInDays = durationInDays;
 	}
 
 	function vote(uint proposalId, bool inFavor) public {
 		require(proposalId < proposals.length, "Invalid proposal ID.");
+		require(
+			block.timestamp <= proposals[proposalId].endDate,
+			"Voting period has ended."
+		);
 		require(
 			!proposals[proposalId].executed,
 			"Proposal has already been executed."
