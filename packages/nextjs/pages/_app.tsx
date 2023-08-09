@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import type { AppProps } from "next/app";
 import { RainbowKitProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
+import axios from "axios";
 import NextNProgress from "nextjs-progressbar";
 import { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { useDarkMode } from "usehooks-ts";
 import { WagmiConfig } from "wagmi";
 import { Footer } from "~~/components/Footer";
@@ -14,6 +16,53 @@ import { useGlobalState } from "~~/services/store/store";
 import { wagmiConfig } from "~~/services/web3/wagmiConfig";
 import { appChains } from "~~/services/web3/wagmiConnectors";
 import "~~/styles/globals.css";
+
+const events = ["vote"];
+
+export const onEventExecuted = (eventName: string) => {
+  toast.success(`Event: ${eventName} has executed.`);
+  console.log(`Event: ${eventName} has executed.`);
+};
+
+const openEventSocket = async () => {
+  console.log("opening socket");
+  try {
+    const headers = { "Content-Type": "application/json" };
+    const response = await axios.post(
+      "/api/watchForEvents",
+      {
+        events: events,
+        address: "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+        action: "open",
+      },
+      { headers },
+    );
+
+    console.log(response);
+  } catch (error: any) {
+    console.error(error.message);
+  }
+};
+
+const closeEventSocket = async () => {
+  console.log("closing socket");
+  try {
+    const headers = { "Content-Type": "application/json" };
+    const response = await axios.post(
+      "/api/watchForEvents",
+      {
+        events: events,
+        address: "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+        action: "close",
+      },
+      { headers },
+    );
+
+    console.log(response);
+  } catch (error: any) {
+    console.error(error.message);
+  }
+};
 
 const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
   const price = useNativeCurrencyPrice();
@@ -31,6 +80,13 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
   useEffect(() => {
     setIsDarkTheme(isDarkMode);
   }, [isDarkMode]);
+
+  useEffect(() => {
+    openEventSocket();
+    return () => {
+      closeEventSocket();
+    };
+  }, []);
 
   return (
     <WagmiConfig config={wagmiConfig}>
