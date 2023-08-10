@@ -59,6 +59,9 @@ contract TokenVesting is Context, AccessProtected, ReentrancyGuard {
     // Emitted when admin withdraws.
     event AdminWithdrawn(address indexed _recipient, uint256 _amountRequested);
 
+    // Emitted when user vesting end time is reduced
+    event UserEndTimeReduced(address indexed _recipient, uint40 newEndTimestamp);
+
 
     /**
     @notice Construct the contract, taking the ERC20 token to be vested as the parameter.
@@ -289,8 +292,8 @@ contract TokenVesting is Context, AccessProtected, ReentrancyGuard {
         // No point in allowing cliff TS without the cliff amount or vice versa.
         // Both or neither of _cliffReleaseTimestamp and _cliffAmount must be set. If cliff is set, _cliffReleaseTimestamp must be before or at the _startTimestamp
         require(
-            (_cliffReleaseTimestamp > 0 &&
-                _cliffAmount > 0 &&
+            (
+                _cliffReleaseTimestamp > 0 && _cliffAmount > 0 &&
                 _cliffReleaseTimestamp <= _startTimestamp) ||
                 (_cliffReleaseTimestamp == 0 && _cliffAmount == 0),
             "INVALID_CLIFF"
@@ -313,8 +316,7 @@ contract TokenVesting is Context, AccessProtected, ReentrancyGuard {
 
         // Still no effects up to this point (and tokenAddress is selected by contract deployer and is immutable), so no reentrancy risk
         require(
-            tokenAddress.balanceOf(address(this)) >=
-                numTokensReservedForVesting + allocatedAmount,
+            tokenAddress.balanceOf(address(this)) >= numTokensReservedForVesting + allocatedAmount,
             "INSUFFICIENT_BALANCE"
         );
 
@@ -516,5 +518,28 @@ contract TokenVesting is Context, AccessProtected, ReentrancyGuard {
     function amountAvailableToWithdrawByAdmin() public view returns (uint256) {
         return
             tokenAddress.balanceOf(address(this)) - numTokensReservedForVesting;
+    }
+
+    /**
+    @notice Reduce user vesting contract cliff time by 1% each time this method is invoked.
+    @param vesteeAddress - address of user that we are reducing the cliff time for
+     */
+    function reduceVesteeCliffTime(address vesteeAddress) external onlyAdmin nonReentrant {
+        Claim storage userClaim = claims[vesteeAddress];
+
+        uint40 durationOfVesting = userClaim.endTimestamp - userClaim.startTimestamp;
+        uint40 onePercentOfVestingDuration = durationOfVesting / 100;
+
+        // Subtract 1 percent from the original timestamp
+        uint40 newEndTimestamp = userClaim.endTimestamp - onePercentOfVestingDuration;
+        userClaim.endTimestamp = newEndTimestamp;
+        emit UserEndTimeReduced(vesteeAddress, newEndTimestamp);
+    }
+
+    /**
+     * @notice Get user vesting end timestamp
+     */
+    function getUserEndTimestamp(address vesteeAddress) public view returns (uint40) {
+        return claims[vesteeAddress].endTimestamp;
     }
 }

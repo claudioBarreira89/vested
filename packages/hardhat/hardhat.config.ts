@@ -26,6 +26,7 @@ const config: HardhatUserConfig = {
       },
     },
   },
+  // defaultNetwork: "sepolia",
   defaultNetwork: "localhost",
   namedAccounts: {
     deployer: {
@@ -41,6 +42,9 @@ const config: HardhatUserConfig = {
         url: `https://eth-mainnet.alchemyapi.io/v2/${providerApiKey}`,
         enabled: process.env.MAINNET_FORKING_ENABLED === "true",
       },
+      // gas: 300000000000,
+      // gas: 10000, //units of gas you are willing to pay, aka gas limit
+      // gasPrice: 50000000000,
     },
     mainnet: {
       url: `https://eth-mainnet.alchemyapi.io/v2/${providerApiKey}`,
