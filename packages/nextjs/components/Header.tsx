@@ -1,22 +1,15 @@
-import React, { useCallback, useRef, useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Bars3Icon, BugAntIcon, MagnifyingGlassIcon, SparklesIcon } from "@heroicons/react/24/outline";
+import { BugAntIcon, CurrencyDollarIcon, MagnifyingGlassIcon, SparklesIcon } from "@heroicons/react/24/outline";
 import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
-import { useOutsideClick } from "~~/hooks/scaffold-eth";
 
 const NavLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
   const router = useRouter();
   const isActive = router.pathname === href;
 
   return (
-    <Link
-      href={href}
-      passHref
-      className={`${
-        isActive ? "bg-secondary shadow-md" : ""
-      } hover:bg-secondary hover:shadow-md focus:bg-secondary py-1.5 px-3 text-sm rounded-full gap-2`}
-    >
+    <Link href={href} passHref className={`${isActive ? "bg-purple-500" : ""}`}>
       {children}
     </Link>
   );
@@ -26,13 +19,6 @@ const NavLink = ({ href, children }: { href: string; children: React.ReactNode }
  * Site header
  */
 export const Header = () => {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const burgerMenuRef = useRef<HTMLDivElement>(null);
-  useOutsideClick(
-    burgerMenuRef,
-    useCallback(() => setIsDrawerOpen(false), []),
-  );
-
   const navLinks = (
     <>
       <li>
@@ -54,6 +40,12 @@ export const Header = () => {
         </NavLink>
       </li>
       <li>
+        <NavLink href="/vesting">
+          <CurrencyDollarIcon className="h-4 w-4" />
+          Vesting
+        </NavLink>
+      </li>
+      <li>
         <NavLink href="/proposals">
           <MagnifyingGlassIcon className="h-4 w-4" />
           Proposals
@@ -63,38 +55,31 @@ export const Header = () => {
   );
 
   return (
-    <div className="sticky lg:static top-0 navbar bg-base-100 min-h-0 flex-shrink-0 justify-between z-20 shadow-md shadow-secondary px-0 sm:px-2">
-      <div className="navbar-start w-auto lg:w-1/2">
-        <div className="lg:hidden dropdown" ref={burgerMenuRef}>
-          <label
-            tabIndex={0}
-            className={`ml-1 btn btn-ghost ${isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"}`}
-            onClick={() => {
-              setIsDrawerOpen(prevIsOpenState => !prevIsOpenState);
-            }}
-          >
-            <Bars3Icon className="h-1/2" />
-          </label>
-          {isDrawerOpen && (
-            <ul
-              tabIndex={0}
-              className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
-              onClick={() => {
-                setIsDrawerOpen(false);
-              }}
+    <div className="navbar">
+      <div className="navbar-start">
+        <div className="dropdown">
+          <label tabIndex={0} className="btn btn-ghost btn-circle">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-              {navLinks}
-            </ul>
-          )}
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" />
+            </svg>
+          </label>
+          <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+            {navLinks}
+          </ul>
         </div>
-        <Link href="/" passHref className="lg:flex items-center gap-2 ml-4 mr-6 block mr-4">
-          <div className="flex">
-            <span className="text-xl flex">VESTED</span>
-          </div>
-        </Link>
-        <ul className="hidden lg:flex lg:flex-nowrap menu menu-horizontal px-1 gap-2">{navLinks}</ul>
       </div>
-      <div className="navbar-end flex-grow mr-4">
+      <div className="navbar-center">
+        <Link href={"/"}>
+          <span className="btn btn-ghost normal-case text-xl">VESTED</span>
+        </Link>
+      </div>
+      <div className="navbar-end">
         <RainbowKitCustomConnectButton />
         <FaucetButton />
       </div>

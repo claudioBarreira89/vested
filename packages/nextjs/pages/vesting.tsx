@@ -3,14 +3,14 @@ import type { NextPage } from "next";
 import { MetaHeader } from "~~/components/MetaHeader";
 
 const Page: NextPage = () => {
-  const Proposals = dynamic(() => import("~~/components/Proposals").then(res => res.default), {
+  const Vesting = dynamic(() => import("~~/components/Vesting").then(res => res.default), {
     ssr: false,
   });
 
   return (
     <>
       <MetaHeader />
-      <Proposals />
+      <Vesting />
     </>
   );
 };
