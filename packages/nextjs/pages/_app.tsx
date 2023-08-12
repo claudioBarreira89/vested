@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import type { AppProps } from "next/app";
 import { RainbowKitProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
-import axios from "axios";
+import { DefaultEventsMap } from "@socket.io/component-emitter";
 import NextNProgress from "nextjs-progressbar";
-import { Toaster } from "react-hot-toast";
-import toast from "react-hot-toast";
+import io, { Socket } from "socket.io-client";
+// import toast, { Toaster } from 'react-hot-toast';
 import { useDarkMode } from "usehooks-ts";
 import { WagmiConfig } from "wagmi";
 import { Footer } from "~~/components/Footer";
@@ -17,51 +17,16 @@ import { wagmiConfig } from "~~/services/web3/wagmiConfig";
 import { appChains } from "~~/services/web3/wagmiConnectors";
 import "~~/styles/globals.css";
 
-const events = ["vote"];
+// const events = ["Voted"];
 
 export const onEventExecuted = (eventName: string) => {
-  toast.success(`Event: ${eventName} has executed.`);
+  // toast.success(`Event: ${eventName} has executed.`);
   console.log(`Event: ${eventName} has executed.`);
 };
 
-const openEventSocket = async () => {
-  console.log("opening socket");
-  try {
-    const headers = { "Content-Type": "application/json" };
-    const response = await axios.post(
-      "/api/watchForEvents",
-      {
-        events: events,
-        address: "0x5fbdb2315678afecb367f032d93f642f64180aa3",
-        action: "open",
-      },
-      { headers },
-    );
-
-    console.log(response);
-  } catch (error: any) {
-    console.error(error.message);
-  }
-};
-
-const closeEventSocket = async () => {
-  console.log("closing socket");
-  try {
-    const headers = { "Content-Type": "application/json" };
-    const response = await axios.post(
-      "/api/watchForEvents",
-      {
-        events: events,
-        address: "0x5fbdb2315678afecb367f032d93f642f64180aa3",
-        action: "close",
-      },
-      { headers },
-    );
-
-    console.log(response);
-  } catch (error: any) {
-    console.error(error.message);
-  }
+export const onEventSubscribe = (eventName: string) => {
+  // toast.success(`Event: ${eventName} has been subscribed to.`);
+  console.log(`Event: ${eventName} has been subscribed to.`);
 };
 
 const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
@@ -69,6 +34,7 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
   const setNativeCurrencyPrice = useGlobalState(state => state.setNativeCurrencyPrice);
   // This variable is required for initial client side rendering of correct theme for RainbowKit
   const [isDarkTheme, setIsDarkTheme] = useState(true);
+  const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
   const { isDarkMode } = useDarkMode();
 
   useEffect(() => {
@@ -82,9 +48,32 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
   }, [isDarkMode]);
 
   useEffect(() => {
-    openEventSocket();
+    console.log("Connecting to WebSocket server...");
+    const newSocket = io("http://localhost:5002/", {
+      transports: ["websocket"],
+    });
+
+    newSocket.on("connect", () => {
+      console.log("Connected to WebSocket server");
+    });
+
+    newSocket.on("event", event => {
+      console.log("Received event:");
+      console.log(event);
+    });
+
+    newSocket.on("starting", message => {
+      console.log("Starting the server");
+      console.log(message);
+    });
+
+    setSocket(newSocket);
+    console.log(socket);
+
+    // Clean up the socket connection on unmount
     return () => {
-      closeEventSocket();
+      console.log("Disconnecting from WebSocket server...");
+      newSocket.disconnect();
     };
   }, []);
 
@@ -101,9 +90,9 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
           <main className="relative flex flex-col flex-1">
             <Component {...pageProps} />
           </main>
+          {/* <Toaster /> */}
           <Footer />
         </div>
-        <Toaster />
       </RainbowKitProvider>
     </WagmiConfig>
   );
