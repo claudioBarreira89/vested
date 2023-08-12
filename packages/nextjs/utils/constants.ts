@@ -1,4 +1,4 @@
-import { Proposal } from "~~/pages/proposals";
+import { Proposal } from "~~/components/Proposals";
 
 export const proposals: Proposal[] = [
   {

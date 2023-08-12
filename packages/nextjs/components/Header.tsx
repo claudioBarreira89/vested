@@ -75,9 +75,9 @@ export const Header = () => {
         </div>
       </div>
       <div className="navbar-center">
-        <NavLink href="/">
-          <span className="btn btn-ghost normal-case text-xl ">VESTED</span>
-        </NavLink>
+        <Link href={"/"}>
+          <span className="btn btn-ghost normal-case text-xl">VESTED</span>
+        </Link>
       </div>
       <div className="navbar-end">
         <RainbowKitCustomConnectButton />
