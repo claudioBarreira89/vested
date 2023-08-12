@@ -21,7 +21,7 @@
     "hardhat:lint-staged": "yarn workspace @se-2/hardhat lint-staged",
     "hardhat:test": "yarn workspace @se-2/hardhat test",
     "test": "yarn hardhat:test",
-    "start": "yarn workspace @se-2/nextjs dev",
+    "start": "yarn c @se-2/nextjs dev",
     "server": "yarn workspace @se-2/server start",
     "next:lint": "yarn workspace @se-2/nextjs lint",
     "next:format": "yarn workspace @se-2/nextjs format",
