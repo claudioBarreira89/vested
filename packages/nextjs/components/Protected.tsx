@@ -26,7 +26,7 @@ const Protected = ({ children }: any) => {
      * This function will verify if the user has the NFT
      */
 
-    return false;
+    return true;
   };
 
   const verifyVesting = useCallback(async () => {
