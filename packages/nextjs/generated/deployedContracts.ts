@@ -5,7 +5,7 @@ const contracts = {
       name: "localhost",
       contracts: {
         Congress: {
-          address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+          address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
           abi: [
             {
               anonymous: false,
@@ -34,6 +34,11 @@ const contracts = {
             },
             {
               inputs: [
+                {
+                  internalType: "string",
+                  name: "title",
+                  type: "string",
+                },
                 {
                   internalType: "string",
                   name: "description",
@@ -65,12 +70,122 @@ const contracts = {
             },
             {
               inputs: [],
+              name: "getProposals",
+              outputs: [
+                {
+                  components: [
+                    {
+                      internalType: "uint256",
+                      name: "id",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "string",
+                      name: "title",
+                      type: "string",
+                    },
+                    {
+                      internalType: "string",
+                      name: "description",
+                      type: "string",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "votesInFavor",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "votesAgainst",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "bool",
+                      name: "executed",
+                      type: "bool",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "endDate",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "durationInDays",
+                      type: "uint256",
+                    },
+                  ],
+                  internalType: "struct Congress.Proposal[]",
+                  name: "",
+                  type: "tuple[]",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
               name: "getProposalsCount",
               outputs: [
                 {
                   internalType: "uint256",
                   name: "",
                   type: "uint256",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "getUnvotedProposals",
+              outputs: [
+                {
+                  components: [
+                    {
+                      internalType: "uint256",
+                      name: "id",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "string",
+                      name: "title",
+                      type: "string",
+                    },
+                    {
+                      internalType: "string",
+                      name: "description",
+                      type: "string",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "votesInFavor",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "votesAgainst",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "bool",
+                      name: "executed",
+                      type: "bool",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "endDate",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "durationInDays",
+                      type: "uint256",
+                    },
+                  ],
+                  internalType: "struct Congress.Proposal[]",
+                  name: "",
+                  type: "tuple[]",
                 },
               ],
               stateMutability: "view",
@@ -86,6 +201,16 @@ const contracts = {
               ],
               name: "proposals",
               outputs: [
+                {
+                  internalType: "uint256",
+                  name: "id",
+                  type: "uint256",
+                },
+                {
+                  internalType: "string",
+                  name: "title",
+                  type: "string",
+                },
                 {
                   internalType: "string",
                   name: "description",
@@ -138,10 +263,34 @@ const contracts = {
               stateMutability: "nonpayable",
               type: "function",
             },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "",
+                  type: "uint256",
+                },
+                {
+                  internalType: "address",
+                  name: "",
+                  type: "address",
+                },
+              ],
+              name: "votes",
+              outputs: [
+                {
+                  internalType: "enum Congress.VoteChoice",
+                  name: "",
+                  type: "uint8",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
           ],
         },
         TestERC20Token: {
-          address: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+          address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
           abi: [
             {
               inputs: [
@@ -437,7 +586,7 @@ const contracts = {
           ],
         },
         TokenVesting: {
-          address: "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+          address: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
           abi: [
             {
               inputs: [
@@ -1086,7 +1235,7 @@ const contracts = {
           ],
         },
         YourContract: {
-          address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+          address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
           abi: [
             {
               inputs: [

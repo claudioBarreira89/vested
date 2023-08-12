@@ -3,14 +3,17 @@ pragma solidity ^0.8.0;
 
 contract Congress {
 	struct Proposal {
+		uint id;
+		string title;
 		string description;
 		uint votesInFavor;
 		uint votesAgainst;
 		bool executed;
 		uint endDate;
 		uint durationInDays;
-		mapping(address => VoteChoice) hasVoted;
 	}
+
+	mapping(uint => mapping(address => VoteChoice)) public votes;
 
 	enum VoteChoice {
 		NotVoted,
@@ -23,14 +26,23 @@ contract Congress {
 	event Voted(address indexed voter, uint proposalId, VoteChoice choice);
 
 	function createProposal(
+		string memory title,
 		string memory description,
 		uint durationInDays
 	) public {
 		uint endDateTime = block.timestamp + (durationInDays * 1 days);
-		Proposal storage newProposal = proposals.push();
-		newProposal.description = description;
-		newProposal.endDate = endDateTime;
-		newProposal.durationInDays = durationInDays;
+		proposals.push(
+			Proposal({
+				id: proposals.length,
+				title: title,
+				description: description,
+				votesInFavor: 0,
+				votesAgainst: 0,
+				executed: false,
+				endDate: endDateTime,
+				durationInDays: durationInDays
+			})
+		);
 	}
 
 	function vote(uint proposalId, bool inFavor) public {
@@ -44,16 +56,16 @@ contract Congress {
 			"Proposal has already been executed."
 		);
 		require(
-			proposals[proposalId].hasVoted[msg.sender] == VoteChoice.NotVoted,
+			votes[proposalId][msg.sender] == VoteChoice.NotVoted,
 			"You have already voted on this proposal."
 		);
 
 		if (inFavor) {
 			proposals[proposalId].votesInFavor += 1;
-			proposals[proposalId].hasVoted[msg.sender] = VoteChoice.InFavor;
+			votes[proposalId][msg.sender] = VoteChoice.InFavor;
 		} else {
 			proposals[proposalId].votesAgainst += 1;
-			proposals[proposalId].hasVoted[msg.sender] = VoteChoice.Against;
+			votes[proposalId][msg.sender] = VoteChoice.Against;
 		}
 
 		emit Voted(
@@ -71,6 +83,40 @@ contract Congress {
 		);
 
 		proposals[proposalId].executed = true;
+	}
+
+	function getProposals() public view returns (Proposal[] memory) {
+		return proposals;
+	}
+
+	function getUnvotedProposals() public view returns (Proposal[] memory) {
+		uint count = 0;
+
+		for (uint i = 0; i < proposals.length; i++) {
+			if (
+				votes[i][msg.sender] == VoteChoice.NotVoted &&
+				block.timestamp <= proposals[i].endDate &&
+				!proposals[i].executed
+			) {
+				count++;
+			}
+		}
+
+		Proposal[] memory unvotedProposals = new Proposal[](count);
+		uint index = 0;
+
+		for (uint i = 0; i < proposals.length; i++) {
+			if (
+				votes[i][msg.sender] == VoteChoice.NotVoted &&
+				block.timestamp <= proposals[i].endDate &&
+				!proposals[i].executed
+			) {
+				unvotedProposals[index] = proposals[i];
+				index++;
+			}
+		}
+
+		return unvotedProposals;
 	}
 
 	function getProposalsCount() public view returns (uint) {
