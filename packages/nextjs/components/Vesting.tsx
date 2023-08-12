@@ -1,4 +1,31 @@
+import { useState } from "react";
+import axios from "axios";
+
 const Vesting = () => {
+  const [loading, setLoading] = useState(false);
+
+  const createVestingSchedule = async () => {
+    console.log("creating vvestin");
+    // if (!data.events.length) throw new Error("No events found in the events table.")
+    // console.log(data);
+    setLoading(true);
+    try {
+      const headers = { "Content-Type": "application/json" };
+      const response = await axios.post(
+        "/api/createVestingSchedule",
+        { address: "0xa91d405230bd93d873c98c9ED96285775ec1dC1A" },
+        { headers },
+      );
+      console.log(response);
+      // toast.success("Great Success! Your settings have been saved.");
+    } catch (error: any) {
+      // toast.error("Something went wrong saving your settings.")
+      console.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex items-center flex-col flex-grow pt-10 max-w-5xl m-auto w-full">
       <main className="p-6 w-full">
@@ -16,7 +43,12 @@ const Vesting = () => {
               Each interaction reduces your vesting cliff time.
             </p>
             <div className="card-actions w-full flex">
-              <button className="bg-purple-600 mt-5 flex-1 text-white px-4 py-2 rounded hover:bg-purple-700 text-center">
+              <button
+                type="button"
+                disabled={loading}
+                onClick={() => createVestingSchedule()}
+                className="bg-purple-600 mt-5 flex-1 text-white px-4 py-2 rounded hover:bg-purple-700 text-center cursor-pointer"
+              >
                 Create vesting schedule
               </button>
             </div>
