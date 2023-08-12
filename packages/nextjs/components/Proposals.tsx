@@ -75,6 +75,9 @@ const Proposals = () => {
         ...state,
         [proposalId]: false,
       }));
+
+      toast.success("Vote submitted");
+
       refetch();
     } catch (err) {
       toast.error("Something went wrong");
@@ -101,6 +104,9 @@ const Proposals = () => {
 
       setIsCreating(false);
       setIsModalOpen(false);
+
+      toast.success("Proposal created");
+
       refetch();
     } catch (err) {
       toast.error("Something went wrong");

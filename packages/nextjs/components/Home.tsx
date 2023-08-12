@@ -11,13 +11,13 @@ const Home = () => {
                 VESTED
               </span>
             </h1>
-            <p className="text-4xl mb-4">
+            <div className="text-4xl my-4">
               <ul className="flex flex-col gap-2">
                 <li>⚡️ Mint our exclusive NFT to join our DAO</li>
                 <li>⚡️ Create a vesting schedule</li>
                 <li>⚡️ Interact with the community and release your tokens sooner!</li>
               </ul>
-            </p>
+            </div>
           </div>
         </section>
 
