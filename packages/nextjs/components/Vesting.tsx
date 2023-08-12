@@ -1,21 +1,33 @@
 import { useState } from "react";
 import axios from "axios";
+import { useAccount } from "wagmi";
+import { getWalletClient } from "wagmi/actions";
 
 const Vesting = () => {
+  const { address } = useAccount();
   const [loading, setLoading] = useState(false);
 
   const createVestingSchedule = async () => {
     console.log("creating vvestin");
-    // if (!data.events.length) throw new Error("No events found in the events table.")
-    // console.log(data);
+
+    try {
+      const walletClient = await getWalletClient();
+      if (!walletClient) return new Error("No wallet client");
+      const sig = await walletClient.signMessage({
+        message: {
+          raw: "0xce1619f2bb32f17f8d9dc5525d5974eed5213ce6e0986449678f8e477ea31d14",
+        },
+      } as any);
+      if (!sig) return new Error("Did not sign");
+    } catch (err: any) {
+      console.log(err);
+      return;
+    }
+
     setLoading(true);
     try {
       const headers = { "Content-Type": "application/json" };
-      const response = await axios.post(
-        "/api/createVestingSchedule",
-        { address: "0xa91d405230bd93d873c98c9ED96285775ec1dC1A" },
-        { headers },
-      );
+      const response = await axios.post("/api/createVestingSchedule", { address: address }, { headers });
       console.log(response);
       // toast.success("Great Success! Your settings have been saved.");
     } catch (error: any) {

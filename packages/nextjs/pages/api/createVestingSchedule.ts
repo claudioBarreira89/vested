@@ -20,7 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   if (!address) return console.error("No recipient address provided");
 
   //Vesting Settings
-  const _recipient = "0xa91d405230bd93d873c98c9ED96285775ec1dC1A";
+  const _recipient = address;
   const _startTimestamp = Math.floor(Date.now() / 1000); // today
   console.log("_startTimestamp: ", _startTimestamp);
   const _endTimestamp = _startTimestamp + 2592000; // 1 Month (30 days) days after today
