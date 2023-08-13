@@ -39,9 +39,7 @@ const Protected = ({ children }: any) => {
         functionName: "getClaim",
         args: [address],
       });
-
       const { isActive } = data as { isActive: boolean };
-
       return isActive;
     } catch (err) {
       toast.error("Something went wrong");

@@ -31,9 +31,8 @@ const Vesting = () => {
     functionName: "getClaim",
     args: [address],
   });
-
   const { isActive, startTimestamp, endTimestamp, cliffAmount, amountWithdrawn, linearVestAmount } = data as IVesting;
-
+  console.log(data);
   const createVestingSchedule = async () => {
     const isLegit = await isLegitimateWallet();
 
@@ -95,8 +94,11 @@ const Vesting = () => {
               <div className="card-body">
                 <h2 className="text-2xl font-bold">Schedule</h2>
 
-                <div className="h-2 w-full bg-blue-200 rounded-lg overflow-hidden">
-                  <div className="h-full w-1/2 bg-purple-500 rounded-lg" style={{ width: progress + "%" }} />
+                <div className="h-2 w-full bg-blue-200 rounded-lg overflow-hidden relative">
+                  <div
+                    className="h-full w-1/2 bg-purple-500 rounded-lg relative z-10"
+                    style={{ width: progress + "%" }}
+                  />
                 </div>
 
                 <div className="flex justify-between">

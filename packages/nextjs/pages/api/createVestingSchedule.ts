@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import type { NextApiRequest, NextApiResponse } from "next";
 import vestingAbi from "~~/utils/abi/vestingAbi";
+import { VESTING_CONTRACT_ADDRESS } from "~~/utils/constants";
 
 type ResData = {
   error?: string;
@@ -22,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   //Vesting Settings
   const _recipient = address;
   const _startTimestamp = Math.floor(Date.now() / 1000); // today
-  const _endTimestamp = _startTimestamp + 2592000; // 1 Month (30 days) days after today
+  const _endTimestamp = _startTimestamp + 10368000; // 4 Months (30 days) days after today
   const _cliffReleaseTimestamp = _startTimestamp;
   const _releaseIntervalSecs = 60;
   const _linearVestAmount = 100;
@@ -31,7 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   try {
     const provider = new ethers.JsonRpcProvider(process.env.OPGOERLI_RPC_URL || "");
     const signer = new ethers.Wallet(privateKey, provider);
-    const vesting = new ethers.Contract("0x1b205683a69B0F167F738Bf4F41791Db27c1114a", vestingAbi, signer);
+    const vesting = new ethers.Contract(VESTING_CONTRACT_ADDRESS, vestingAbi, signer);
 
     console.log(
       "Tokens to have on vesting contract address before creating the claim:",
