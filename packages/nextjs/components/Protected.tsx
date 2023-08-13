@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import LoadingPage from "./LoadingPage";
+import { IDKitWidget, ISuccessResult } from "@worldcoin/idkit";
 import { toast } from "react-hot-toast";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
@@ -17,6 +18,7 @@ const Protected = ({ children }: any) => {
   const [authorized, setAuthorized] = useState(false);
   const [hasNFT, setHasNFT] = useState(true);
   const [hasVesting, setHasVesting] = useState(true);
+  const [hasWorldId, setHasWorldId] = useState(false);
 
   const verifyNFT = () => {
     /**
@@ -47,6 +49,41 @@ const Protected = ({ children }: any) => {
     }
   }, [address]);
 
+  const verifyWorldCoin = async (result: ISuccessResult) => {
+    const reqBody = {
+      merkle_root: result.merkle_root,
+      nullifier_hash: result.nullifier_hash,
+      proof: result.proof,
+      credential_type: result.credential_type,
+      action: "parisnotif",
+      signal: "",
+    };
+
+    return fetch("/api/worldcoin/verify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(reqBody),
+    }).then(async (res: Response) => {
+      return new Promise<void>((resolve, reject) => {
+        if (res.status !== 200) {
+          toast.error("Error happend! Maybe you are not verified with Orb?");
+          reject("Verification failed");
+          console.error("Verification failed");
+        }
+
+        console.log("Successfully verified credential.");
+        resolve();
+      });
+    });
+  };
+
+  const onSuccess = () => {
+    toast.success("Great Sucess! you are a human!");
+    setHasWorldId(true);
+  };
+
   const authCheck = useCallback(
     async (url: string) => {
       setIsLoading(true);
@@ -68,6 +105,14 @@ const Protected = ({ children }: any) => {
         return;
       }
 
+      if (!hasWorldId) {
+        setAuthorized(false);
+        setIsLoading(false);
+        setHasWorldId(false);
+        return;
+      }
+
+      setHasWorldId(true);
       setIsLoading(false);
       setAuthorized(true);
       setHasVesting(true);
@@ -184,6 +229,26 @@ const Protected = ({ children }: any) => {
             </Link>
           </div>
         </main>
+      </div>
+    );
+  }
+
+  if (!hasWorldId) {
+    return (
+      <div className="flex gap-3">
+        <IDKitWidget
+          app_id={process.env.NEXT_PUBLIC_WORLDCOIN_ID!} // obtained from the Developer Portal
+          action="parisnotif" // this is your action name from the Developer Portal
+          onSuccess={onSuccess}
+          handleVerify={verifyWorldCoin}
+          enableTelemetry // optional, defaults to false
+        >
+          {({ open }) => (
+            <button type="button" className="py-2 h-fit flex align-middle" onClick={open}>
+              Verify with World ID
+            </button>
+          )}
+        </IDKitWidget>
       </div>
     );
   }

@@ -42,6 +42,8 @@
     "usehooks-ts@^2.7.2": "patch:usehooks-ts@npm:^2.7.2#./.yarn/patches/usehooks-ts-npm-2.7.2-fceffe0e43.patch"
   },
   "dependencies": {
+    "@worldcoin/idkit": "^0.5.1",
+    "@zoralabs/zdk": "^2.4.0",
     "alchemy-sdk": "^2.9.2",
     "cors": "^2.8.5",
     "ethers": "5.6.5",

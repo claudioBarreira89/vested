@@ -32,7 +32,6 @@ const Vesting = () => {
     args: [address],
   });
   const { isActive, startTimestamp, endTimestamp, cliffAmount, amountWithdrawn, linearVestAmount } = data as IVesting;
-  console.log(data);
   const createVestingSchedule = async () => {
     const isLegit = await isLegitimateWallet();
 

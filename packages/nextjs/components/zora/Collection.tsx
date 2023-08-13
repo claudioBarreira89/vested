@@ -10,13 +10,14 @@ export function Collection({ collection, username }: { collection: SubgraphERC72
     drop: DropMetadataContractProvider,
     edition: EditionMetadataContractProvider,
   };
+
   const MetadataProvider =
     components[DROPS_METADATA_RENDERER.includes(collection.contractConfig?.metadataRenderer) ? "drop" : "edition"];
 
   if (!collection) {
     return <div>Loading...</div>;
   }
-
+  console.log(MetadataProvider);
   return (
     <ERC721DropContractProvider collection={collection}>
       <MetadataProvider collection={collection} metadataRendererAddress={collection.contractConfig.metadataRenderer}>

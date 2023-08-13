@@ -23,6 +23,7 @@
     "@vanilla-extract/next-plugin": "^2.0.2",
     "@vanilla-extract/recipes": "^0.2.5",
     "@vanilla-extract/sprinkles": "^1.4.1",
+    "@worldcoin/idkit": "^0.5.1",
     "@zoralabs/zdk": "^2.4.0",
     "@zoralabs/zord": "^2.1.0",
     "antd": "^5.8.2",
