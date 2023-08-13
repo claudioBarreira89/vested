@@ -135,7 +135,7 @@ const Protected = ({ children }: any) => {
           </div>
           <div className="flex flex-col items-center w-full gap-6">
             <Link
-              href="/marketplace"
+              href="/mint"
               type="button"
               className="bg-purple-600 text-white text-2xl px-4 py-2 rounded hover:bg-purple-700 text-center w-96 m-auto mt-10"
             >
