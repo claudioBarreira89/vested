@@ -1,5 +1,5 @@
 import { Button, Paragraph, Stack } from '@zoralabs/zord'
-import { OldIcon, OldIconType } from 'components/OldIcon'
+import { OldIcon, OldIconType } from '../OldIcon'
 import React, { useCallback, useEffect } from 'react'
 import { useAudioPlayer } from 'react-use-audio-player'
 import { ProgressBar } from './ProgressBar'

@@ -1,11 +1,11 @@
 import { Box, Flex } from '@zoralabs/zord'
 import React, { CSSProperties } from 'react'
-import { audioGrid } from 'styles/styles.css'
-import { ImageWithFallback } from 'components/ImageWithFallback'
-import { DelayedCenteredSpinner } from 'components/DelayedCenteredSpinner'
+import { audioGrid } from '../../styles/styles.css'
+import { ImageWithFallback } from '../ImageWithFallback'
+import { DelayedCenteredSpinner } from '../DelayedCenteredSpinner'
 import { AudioPlayer } from './AudioPlayer'
 import { AudioPlayerProvider } from 'react-use-audio-player'
-import { useIsMounted } from 'hooks/useIsMounted'
+import { useIsMounted } from '../../hooks/useIsMounted'
 
 export interface AudioRendererProps {
   style?: CSSProperties
@@ -27,12 +27,10 @@ export function AudioRenderer({
 }: AudioRendererProps) {
   const isMounted = useIsMounted()
 
-  const waveformDisplay = (
-      isMounted && src && (
-        <AudioPlayerProvider>
-          <AudioPlayer src={src} inverted={inverted} compact={compact} />
-        </AudioPlayerProvider>
-      )
+  const waveformDisplay = isMounted && src && (
+    <AudioPlayerProvider>
+      <AudioPlayer src={src} inverted={inverted} compact={compact} />
+    </AudioPlayerProvider>
   )
 
   if (compact) {
@@ -93,10 +91,7 @@ export function AudioRenderer({
 
   return (
     <Flex className={audioGrid} align="center" justify="center" h="100%" w="100%">
-      <Box
-        w="100%"
-        m="auto"
-      >
+      <Box w="100%" m="auto">
         <ImageWithFallback
           alt="Cover image"
           src={coverImageUrl}

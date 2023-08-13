@@ -22,9 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   //Vesting Settings
   const _recipient = address;
   const _startTimestamp = Math.floor(Date.now() / 1000); // today
-  console.log("_startTimestamp: ", _startTimestamp);
   const _endTimestamp = _startTimestamp + 2592000; // 1 Month (30 days) days after today
-  console.log("_endTimestamp: ", _endTimestamp);
   const _cliffReleaseTimestamp = _startTimestamp;
   const _releaseIntervalSecs = 60;
   const _linearVestAmount = 100;
@@ -41,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     );
     console.log("Creating the claim...");
 
-    const res = await vesting.createClaim(
+    await vesting.createClaim(
       _recipient,
       _startTimestamp,
       _endTimestamp,
@@ -53,8 +51,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         gasLimit: 200000,
       },
     );
-
-    console.log(res);
   } catch (err: any) {
     console.error(err);
     return res.status(500).json({ error: err });

@@ -3,14 +3,13 @@ import type { AppProps } from "next/app";
 import { RainbowKitProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import "@rainbow-me/rainbowkit/styles.css";
-import { DefaultEventsMap } from "@socket.io/component-emitter";
 import "@zoralabs/zord/index.css";
 import NextNProgress from "nextjs-progressbar";
-import io, { Socket } from "socket.io-client";
+import toast, { Toaster } from "react-hot-toast";
+import io from "socket.io-client";
 import { SWRConfig } from "swr";
-// import toast, { Toaster } from 'react-hot-toast';
 import { useDarkMode } from "usehooks-ts";
-import { WagmiConfig } from "wagmi";
+import { WagmiConfig, useAccount } from "wagmi";
 import { Footer } from "~~/components/Footer";
 import { Header } from "~~/components/Header";
 import { BlockieAvatar } from "~~/components/scaffold-eth";
@@ -21,24 +20,13 @@ import { appChains } from "~~/services/web3/wagmiConnectors";
 import "~~/styles/globals.css";
 import "~~/styles/theme.css";
 
-// const events = ["Voted"];
-
-export const onEventExecuted = (eventName: string) => {
-  // toast.success(`Event: ${eventName} has executed.`);
-  console.log(`Event: ${eventName} has executed.`);
-};
-
-export const onEventSubscribe = (eventName: string) => {
-  // toast.success(`Event: ${eventName} has been subscribed to.`);
-  console.log(`Event: ${eventName} has been subscribed to.`);
-};
-
 const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
+  const { address, isConnected } = useAccount();
   const price = useNativeCurrencyPrice();
   const setNativeCurrencyPrice = useGlobalState(state => state.setNativeCurrencyPrice);
   // This variable is required for initial client side rendering of correct theme for RainbowKit
   const [isDarkTheme, setIsDarkTheme] = useState(true);
-  const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
+  // const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
   const { isDarkMode } = useDarkMode();
 
   useEffect(() => {
@@ -52,6 +40,7 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
   }, [isDarkMode]);
 
   useEffect(() => {
+    if (!isConnected) return;
     console.log("Connecting to WebSocket server...");
     const newSocket = io("http://localhost:5002/", {
       transports: ["websocket"],
@@ -61,25 +50,21 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
       console.log("Connected to WebSocket server");
     });
 
-    newSocket.on("event", event => {
+    newSocket.on("UserEndTimeReduced", (inputData: string) => {
+      if (!address) return console.log("no address");
+      const transactionAddress = `0x${inputData.slice(-40)}`;
+      console.log(transactionAddress);
+      console.log(inputData);
+      if (transactionAddress !== address.toLocaleLowerCase()) return console.log("no equal address");
       console.log("Received event:");
-      console.log(event);
+      toast.success(`Great Success! Your cliff has been reduced by 1%!.`);
     });
 
-    newSocket.on("starting", message => {
-      console.log("Starting the server");
-      console.log(message);
-    });
-
-    setSocket(newSocket);
-    console.log(socket);
-
-    // Clean up the socket connection on unmount
     return () => {
       console.log("Disconnecting from WebSocket server...");
       newSocket.disconnect();
     };
-  }, []);
+  }, [address, isConnected]);
 
   return (
     <WagmiConfig config={wagmiConfig}>
@@ -99,7 +84,27 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
             <main className="relative flex flex-col flex-1">
               <Component {...pageProps} />
             </main>
-            {/* <Toaster /> */}
+            <Toaster
+              position="top-center"
+              reverseOrder={false}
+              gutter={8}
+              containerClassName=""
+              containerStyle={{}}
+              toastOptions={{
+                // Define default options
+                className: "",
+                duration: 5000,
+                style: {
+                  background: "#363636",
+                  color: "#fff",
+                },
+
+                // Default options for specific types
+                success: {
+                  duration: 3000,
+                },
+              }}
+            />
             <Footer />
           </div>
         </SWRConfig>
