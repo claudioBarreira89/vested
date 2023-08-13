@@ -81,7 +81,9 @@ const Protected = ({ children }: any) => {
 
   const onSuccess = () => {
     toast.success("Great Sucess! you are a human!");
+    localStorage.setItem("worldId", "1");
     setHasWorldId(true);
+    setAuthorized(true);
   };
 
   const authCheck = useCallback(
@@ -132,6 +134,14 @@ const Protected = ({ children }: any) => {
       router.events.off("routeChangeComplete", authCheck);
     };
   }, [authCheck, router.asPath, router.events]);
+
+  useEffect(() => {
+    const worldId = localStorage.getItem("worldId");
+    console.log(worldId);
+    if (!worldId) return;
+    setHasWorldId(true);
+    setAuthorized(true);
+  });
 
   if (isLoading) return <LoadingPage />;
 
@@ -253,7 +263,11 @@ const Protected = ({ children }: any) => {
               enableTelemetry // optional, defaults to false
             >
               {({ open }) => (
-                <button type="button" className="py-2 h-fit flex align-middle" onClick={open}>
+                <button
+                  type="button"
+                  className="bg-blue-600 text-white text-2xl px-4 py-2 rounded hover:bg-blue-700 text-center w-96 m-auto pointer"
+                  onClick={open}
+                >
                   Verify with World ID
                 </button>
               )}
