@@ -30,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   const _cliffAmount = 24;
 
   try {
-    const provider = new ethers.JsonRpcProvider(process.env.OPGOERLI_RPC_URL || "");
+    const provider = new ethers.providers.JsonRpcProvider(process.env.OPGOERLI_RPC_URL || "");
     const signer = new ethers.Wallet(privateKey, provider);
     const vesting = new ethers.Contract(VESTING_CONTRACT_ADDRESS, vestingAbi, signer);
 

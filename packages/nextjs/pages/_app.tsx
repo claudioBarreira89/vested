@@ -61,7 +61,7 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
     });
 
     return () => {
-      localStorage.removeItem("worldId");
+      // localStorage.removeItem("worldId");
       console.log("Disconnecting from WebSocket server...");
       newSocket.disconnect();
     };
