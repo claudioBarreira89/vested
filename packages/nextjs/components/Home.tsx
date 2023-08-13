@@ -29,10 +29,7 @@ const Home = () => {
                 Mint our DAO&apos;s NFT to access VESTED features and engage in proposals and voting.
               </p>
             </div>
-            <Link
-              href="http://localhost:3001"
-              className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 text-center"
-            >
+            <Link href="/mint" className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 text-center">
               Mint NFT
             </Link>
           </div>

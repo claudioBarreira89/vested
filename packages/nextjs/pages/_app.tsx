@@ -2,9 +2,12 @@ import { useEffect, useState } from "react";
 import type { AppProps } from "next/app";
 import { RainbowKitProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
+import "@rainbow-me/rainbowkit/styles.css";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
+import "@zoralabs/zord/index.css";
 import NextNProgress from "nextjs-progressbar";
 import io, { Socket } from "socket.io-client";
+import { SWRConfig } from "swr";
 // import toast, { Toaster } from 'react-hot-toast';
 import { useDarkMode } from "usehooks-ts";
 import { WagmiConfig } from "wagmi";
@@ -16,6 +19,7 @@ import { useGlobalState } from "~~/services/store/store";
 import { wagmiConfig } from "~~/services/web3/wagmiConfig";
 import { appChains } from "~~/services/web3/wagmiConnectors";
 import "~~/styles/globals.css";
+import "~~/styles/theme.css";
 
 // const events = ["Voted"];
 
@@ -85,14 +89,20 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
         avatar={BlockieAvatar}
         theme={isDarkTheme ? darkTheme() : lightTheme()}
       >
-        <div className="flex flex-col min-h-screen">
-          <Header />
-          <main className="relative flex flex-col flex-1">
-            <Component {...pageProps} />
-          </main>
-          {/* <Toaster /> */}
-          <Footer />
-        </div>
+        <SWRConfig
+          value={{
+            fetcher: (resource: any, init: any) => fetch(resource, init).then(res => res.json()),
+          }}
+        >
+          <div className="flex flex-col min-h-screen">
+            <Header />
+            <main className="relative flex flex-col flex-1">
+              <Component {...pageProps} />
+            </main>
+            {/* <Toaster /> */}
+            <Footer />
+          </div>
+        </SWRConfig>
       </RainbowKitProvider>
     </WagmiConfig>
   );

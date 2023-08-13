@@ -1,8 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 // import { ethers } from 'ethers'
-const path = require('path')
-const fsp = require('fs').promises
-import { existsSync } from 'fs'
+import path from 'path'
+
+import { existsSync, promises as fsp } from 'fs'
+
 // import abi from 'lib/abi.json'
 // import { chains } from 'lib/chains'
 // import { baseUrl, contractAddress, chainId } from 'lib/constants'
