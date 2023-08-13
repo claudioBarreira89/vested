@@ -81,7 +81,9 @@ const Protected = ({ children }: any) => {
 
   const onSuccess = () => {
     toast.success("Great Sucess! you are a human!");
+    localStorage.setItem("worldId", "1");
     setHasWorldId(true);
+    setAuthorized(true);
   };
 
   const authCheck = useCallback(
@@ -132,6 +134,14 @@ const Protected = ({ children }: any) => {
       router.events.off("routeChangeComplete", authCheck);
     };
   }, [authCheck, router.asPath, router.events]);
+
+  useEffect(() => {
+    const worldId = localStorage.getItem("worldId");
+    console.log(worldId);
+    if (!worldId) return;
+    setHasWorldId(true);
+    setAuthorized(true);
+  });
 
   if (isLoading) return <LoadingPage />;
 
@@ -235,20 +245,35 @@ const Protected = ({ children }: any) => {
 
   if (!hasWorldId) {
     return (
-      <div className="flex gap-3">
-        <IDKitWidget
-          app_id={process.env.NEXT_PUBLIC_WORLDCOIN_ID!} // obtained from the Developer Portal
-          action="parisnotif" // this is your action name from the Developer Portal
-          onSuccess={onSuccess}
-          handleVerify={verifyWorldCoin}
-          enableTelemetry // optional, defaults to false
-        >
-          {({ open }) => (
-            <button type="button" className="py-2 h-fit flex align-middle" onClick={open}>
-              Verify with World ID
-            </button>
-          )}
-        </IDKitWidget>
+      <div className="flex items-center flex-col flex-grow pt-24 max-w-5xl w-full m-auto h-full ">
+        <main className="p-6 w-full">
+          <h1 className="text-6xl font-semibold flex gap-4 mb-4">
+            <span className="pb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-400">
+              Go get your WorldCoin Login!
+            </span>
+            💰
+          </h1>
+          <div className="text-3xl my-8">You need to be a verified human to go onto this page</div>
+          <div className="flex flex-col items-center w-full gap-6">
+            <IDKitWidget
+              app_id={process.env.NEXT_PUBLIC_WORLDCOIN_ID!} // obtained from the Developer Portal
+              action="parisnotif" // this is your action name from the Developer Portal
+              onSuccess={onSuccess}
+              handleVerify={verifyWorldCoin}
+              enableTelemetry // optional, defaults to false
+            >
+              {({ open }) => (
+                <button
+                  type="button"
+                  className="bg-blue-600 text-white text-2xl px-4 py-2 rounded hover:bg-blue-700 text-center w-96 m-auto pointer"
+                  onClick={open}
+                >
+                  Verify with World ID
+                </button>
+              )}
+            </IDKitWidget>
+          </div>
+        </main>
       </div>
     );
   }
