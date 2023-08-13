@@ -290,7 +290,7 @@ const contracts = {
           ],
         },
         DAOToken: {
-          address: "0x6Ba5308B6e5E163Bf48826773d3D232eb80B2CE1",
+          address: "0xd1987AF36614c45362dCACcE1c9Fc73849678cb7",
           abi: [
             {
               inputs: [
@@ -586,7 +586,7 @@ const contracts = {
           ],
         },
         TokenVesting: {
-          address: "0x1b205683a69B0F167F738Bf4F41791Db27c1114a",
+          address: "0x616334733c4543e714DcEf015e6300f254A6b1a1",
           abi: [
             {
               inputs: [

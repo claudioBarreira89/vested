@@ -14,6 +14,7 @@ const server = http.createServer(app);
 const io = new Server(server);
 const PORT = process.env.PORT || 5002;
 const pk = process.env.DEPLOYER_PRIVATE_KEY;
+const VestingAddress = "0x616334733c4543e714DcEf015e6300f254A6b1a1"
 const rpcUrl = process.env.OPGOERLI_RPC_URL || "";
 app.use(cors()); // Enable CORS for all routes
 
@@ -29,7 +30,7 @@ const Events = [
   },
   {
     name: "UserEndTimeReduced",
-    address: "0x1b205683a69B0F167F738Bf4F41791Db27c1114a", // Vesting Contract
+    address: VestingAddress, // Vesting Contract
   }
 ]
 
@@ -51,7 +52,7 @@ const onEventFire = async (tx, event) => {
     try {
       const provider = new ethers.JsonRpcProvider(rpcUrl);
       const signer = new ethers.Wallet(pk, provider);
-      const vesting = new ethers.Contract("0x1b205683a69B0F167F738Bf4F41791Db27c1114a", vestingAbi, signer);
+      const vesting = new ethers.Contract(VestingAddress, vestingAbi, signer);
       console.log("Reducing the cliff...");
 
       const res = await vesting.reduceVesteeCliffTime(vesteeAddress);
@@ -83,7 +84,7 @@ server.listen(PORT, () => {
               to: event.address,
             },
           ],
-          includeRemoved: true,
+          includeRemoved: false,
           hashesOnly: false,
         },
         (tx) => onEventFire(tx, event.name)
