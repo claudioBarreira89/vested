@@ -30,10 +30,11 @@ function EditionMetadataContractProvider({
   const signer = useEthersSigner();
   const [metadataDetails, setMetadataDetails] = useState<MetadataDetails>(collection.editionMetadata);
   const [loading, setLoading] = useState(true);
-  const metadataRenderer = useMemo(
-    () => (signer ? new EditionMetadataRenderer__factory(signer).attach(metadataRendererAddress) : null),
-    [signer, metadataRendererAddress],
-  );
+  // const metadataRenderer = useMemo(
+  //   () => (signer ? new EditionMetadataRenderer__factory(signer).attach(metadataRendererAddress) : null),
+  //   [signer, metadataRendererAddress],
+  // );
+  const metadataRenderer: any = null;
 
   useEffect(() => {
     (async () => {

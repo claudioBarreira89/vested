@@ -75,10 +75,12 @@ function ERC721DropContractProvider({
     fundsRecipient: collection.contractConfig.fundsRecipient,
   });
 
-  const drop = useMemo(
-    () => (signer ? new ERC721Drop__factory(signer).attach(collection.address) : null),
-    [signer, collection.address],
-  );
+  // const drop = useMemo(
+  //   () => (signer ? new ERC721Drop__factory(signer).attach(collection.address) : null),
+  //   [signer, collection.address],
+  // );
+
+  const drop: any = null;
 
   const checkHasContract = useCallback(
     async (address: string) => {
@@ -99,7 +101,7 @@ function ERC721DropContractProvider({
       });
       return tx;
     },
-    [drop, state.salesConfig],
+    [checkHasContract, state.salesConfig],
   );
 
   const purchasePresale = useCallback(

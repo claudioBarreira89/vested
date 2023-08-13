@@ -1,15 +1,15 @@
 import React, { useMemo, useState } from "react";
+import { OPEN_EDITION_SIZE } from "../../constants/numbers";
+import { useAllowlistEntry } from "../../hooks/useAllowlistEntry";
+import { useSaleStatus } from "../../hooks/useSaleStatus";
+import { ERC721DropProviderState } from "../../providers/ERC721DropProvider";
+import { collapsibleContent } from "../../styles/styles.css";
+import { formatCryptoVal } from "../../utils/numbers";
 import { CollectionDetailsItem } from "./CollectionDetails/CollectionDetailsItem";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { Box, Flex, Icon, Paragraph, Stack, StackProps, Text } from "@zoralabs/zord";
-import { dateOptions } from "constants/dates";
-import { OPEN_EDITION_SIZE } from "constants/numbers";
-import { useAllowlistEntry } from "hooks/useAllowlistEntry";
-import { useSaleStatus } from "hooks/useSaleStatus";
-import { ERC721DropProviderState } from "providers/ERC721DropProvider";
-import { collapsibleContent } from "styles/styles.css";
-import { formatCryptoVal } from "utils/numbers";
 import { useAccount } from "wagmi";
+import { dateOptions } from "~~/constants/dates";
 
 interface MintDetailsProps extends StackProps {
   collection: ERC721DropProviderState;
