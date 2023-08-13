@@ -32,7 +32,8 @@ const Events = [
     name: "UserEndTimeReduced",
     address: VestingAddress, // Vesting Contract
   }
-]
+];
+
 
 io.on("connection", (socket) => {
   console.log("A user connected");
@@ -44,6 +45,11 @@ io.on("connection", (socket) => {
 
 const onEventFire = async (tx, event) => {
   console.log(`the event ${event} has been executed`);
+  const txReceipt = await alchemy.core.getTransactionReceipt(
+    tx.transaction.hash
+  );
+
+  if (!txReceipt?.logs?.length) return;
   if (event == "Voted") {
     const vesteeAddress = tx.transaction.from;
     if (!pk || !rpcUrl) return console.log("No private key or RPC url");;
@@ -55,9 +61,9 @@ const onEventFire = async (tx, event) => {
       const vesting = new ethers.Contract(VestingAddress, vestingAbi, signer);
       console.log("Reducing the cliff...");
 
-      const res = await vesting.reduceVesteeCliffTime(vesteeAddress);
+      await vesting.reduceVesteeCliffTime(vesteeAddress);
 
-      console.log(res);
+      // console.log(res);
 
       console.log("cliff reduced");
     } catch (err) {
