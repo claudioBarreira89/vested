@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import LoadingPage from "./LoadingPage";
 import { IDKitWidget, ISuccessResult } from "@worldcoin/idkit";
+import { Alchemy, Network } from "alchemy-sdk";
 import { toast } from "react-hot-toast";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
@@ -10,7 +11,7 @@ import { readContract } from "wagmi/actions";
 import vestingAbi from "~~/utils/abi/vestingAbi";
 import { VESTING_CONTRACT_ADDRESS } from "~~/utils/constants";
 
-const Protected = ({ children }: any) => {
+const Protected = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
 
   const { address } = useAccount();
@@ -20,13 +21,31 @@ const Protected = ({ children }: any) => {
   const [hasVesting, setHasVesting] = useState(true);
   const [hasWorldId, setHasWorldId] = useState(false);
 
-  const verifyNFT = () => {
+  const verifyNFT = useCallback(async () => {
+    if (!address) return false;
     /**
-     * This function will verify if the user has the NFT
+     * This function verifies if the user has the NFT
      */
+    const config = {
+      apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID,
+      network: Network.ETH_GOERLI,
+    };
 
-    return true;
-  };
+    const alchemy = new Alchemy(config);
+    const daoNftAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT;
+
+    try {
+      const nfts = await alchemy.nft.getNftsForOwner(address);
+
+      const hasNft = nfts.ownedNfts.some(
+        ({ contract }) => contract.address?.toLowerCase() === daoNftAddress?.toLowerCase(),
+      );
+
+      return hasNft;
+    } catch (err) {
+      return false;
+    }
+  }, [address]);
 
   const verifyVesting = useCallback(async () => {
     if (!address) return false;
@@ -44,7 +63,6 @@ const Protected = ({ children }: any) => {
       const { isActive } = data as { isActive: boolean };
       return isActive;
     } catch (err) {
-      toast.error("Something went wrong");
       return false;
     }
   }, [address]);
