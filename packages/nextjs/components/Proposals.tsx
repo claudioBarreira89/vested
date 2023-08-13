@@ -14,15 +14,9 @@ import { getContractNames } from "~~/utils/scaffold-eth/contractNames";
 /*
 TODOS:
 V1
-  - On user login set up a WS for specific events.
-  - On vote button click send the vote to smart contract.
-  - Once necessary event received call the vesting smart contract to reduce the cliff.
   - Update the frontend once WS receives cliff reduce event.
-
   - Get all proposals that are currenlty live and user has not voted on.
   - Listen for their vote event
-  - On the event trigger the frontend popup
-  - On page close close the web socket
 */
 
 export interface IProposal {
@@ -89,6 +83,10 @@ const Proposals = () => {
 
   const handleCreateProposalTransaction = async () => {
     if (!deployedContractData) return;
+    if (durationInDays == "" || Number(durationInDays) < 1) {
+      toast.error("Valid duration is required.");
+      return;
+    }
 
     setIsCreating(true);
 
@@ -139,7 +137,6 @@ const Proposals = () => {
               Proposals
             </span>
           </h2>
-
           <button
             className="bg-purple-600 mt-10 flex-1 text-white px-4 py-2 rounded hover:bg-purple-700 text-center flex gap-2 justify-center"
             onClick={() => setIsModalOpen(true)}
@@ -190,6 +187,7 @@ const Proposals = () => {
             />
             <input
               type="number"
+              min="1"
               value={durationInDays}
               placeholder="Duration in days"
               className="rounded input input-bordered w-full"

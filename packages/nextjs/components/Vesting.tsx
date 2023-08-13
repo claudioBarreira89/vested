@@ -2,10 +2,11 @@ import { useState } from "react";
 import LoadingPage from "./LoadingPage";
 import axios from "axios";
 import moment from "moment";
+import toast from "react-hot-toast";
 import { Abi } from "viem";
 import { useAccount, useContractRead } from "wagmi";
-import { getWalletClient } from "wagmi/actions";
 import vestingAbi from "~~/utils/abi/vestingAbi";
+import { isLegitimateWallet } from "~~/utils/common";
 import { VESTING_CONTRACT_ADDRESS } from "~~/utils/constants";
 
 interface IVesting {
@@ -34,30 +35,17 @@ const Vesting = () => {
   const { isActive, startTimestamp, endTimestamp, cliffAmount, amountWithdrawn, linearVestAmount } = data as IVesting;
 
   const createVestingSchedule = async () => {
-    console.log("creating vvestin");
-
-    try {
-      const walletClient = await getWalletClient();
-      if (!walletClient) return new Error("No wallet client");
-      const sig = await walletClient.signMessage({
-        message: {
-          raw: "0xce1619f2bb32f17f8d9dc5525d5974eed5213ce6e0986449678f8e477ea31d14",
-        },
-      } as any);
-      if (!sig) return new Error("Did not sign");
-    } catch (err: any) {
-      console.log(err);
-      return;
-    }
+    const isLegit = await isLegitimateWallet();
 
     setLoading(true);
     try {
+      if (!isLegit) return toast.error("You must sign your wallet to start a vesting.");
       const headers = { "Content-Type": "application/json" };
-      const response = await axios.post("/api/createVestingSchedule", { address: address }, { headers });
-      console.log(response);
-      // toast.success("Great Success! Your settings have been saved.");
+      await axios.post("/api/createVestingSchedule", { address: address }, { headers });
+      toast.success("Great Success! your vesting schedule has been created.");
     } catch (error: any) {
-      // toast.error("Something went wrong saving your settings.")
+      console.log("here");
+      toast.error("Something went wrong creating your vesting schedule.");
       console.error(error.message);
     } finally {
       setLoading(false);
