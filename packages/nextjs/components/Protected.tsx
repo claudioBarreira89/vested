@@ -51,7 +51,6 @@ const Protected = ({ children }: any) => {
       setIsLoading(true);
 
       const hasVestingSchedule = await verifyVesting();
-
       const path = url.split("?")[0].split("#")[0];
 
       if (!verifyNFT()) {
@@ -70,6 +69,7 @@ const Protected = ({ children }: any) => {
 
       setIsLoading(false);
       setAuthorized(true);
+      setHasVesting(true);
     },
     [verifyVesting],
   );
