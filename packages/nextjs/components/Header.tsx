@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { BugAntIcon, CurrencyDollarIcon, MagnifyingGlassIcon, SparklesIcon } from "@heroicons/react/24/outline";
+import { BookOpenIcon, CurrencyDollarIcon, FaceSmileIcon } from "@heroicons/react/24/outline";
 import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 
 const NavLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
@@ -22,21 +22,9 @@ export const Header = () => {
   const navLinks = (
     <>
       <li>
-        <NavLink href="/debug">
-          <BugAntIcon className="h-4 w-4" />
-          Debug Contracts
-        </NavLink>
-      </li>
-      <li>
-        <NavLink href="/example-ui">
-          <SparklesIcon className="h-4 w-4" />
-          Example UI
-        </NavLink>
-      </li>
-      <li>
-        <NavLink href="/blockexplorer">
-          <MagnifyingGlassIcon className="h-4 w-4" />
-          Block Explorer
+        <NavLink href="/mint">
+          <FaceSmileIcon className="h-4 w-4" />
+          Mint
         </NavLink>
       </li>
       <li>
@@ -47,7 +35,7 @@ export const Header = () => {
       </li>
       <li>
         <NavLink href="/proposals">
-          <MagnifyingGlassIcon className="h-4 w-4" />
+          <BookOpenIcon className="h-4 w-4" />
           Proposals
         </NavLink>
       </li>

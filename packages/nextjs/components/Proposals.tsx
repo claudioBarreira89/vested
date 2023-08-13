@@ -7,6 +7,8 @@ import { prepareWriteContract, waitForTransaction, writeContract } from "wagmi/a
 import { PlusIcon } from "@heroicons/react/24/outline";
 import Proposal from "~~/components/proposal/Proposal";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
+import congressAbi from "~~/utils/abi/congressAbi";
+import { CONGRESS_CONTRACT_ADDRESS } from "~~/utils/constants";
 import { getContractNames } from "~~/utils/scaffold-eth/contractNames";
 
 /*
@@ -40,8 +42,8 @@ const Proposals = () => {
     refetch,
     isLoading: isFetchingProposals,
   } = useContractRead({
-    address: deployedContractData?.address,
-    abi: deployedContractData?.abi as Abi,
+    address: CONGRESS_CONTRACT_ADDRESS,
+    abi: congressAbi as Abi,
     functionName: "getUnvotedProposals",
   });
 
@@ -55,8 +57,8 @@ const Proposals = () => {
 
     try {
       const { request } = await prepareWriteContract({
-        address: deployedContractData?.address,
-        abi: deployedContractData?.abi as Abi,
+        address: CONGRESS_CONTRACT_ADDRESS,
+        abi: congressAbi as Abi,
         functionName: "vote",
         args: [proposalId, inFavor],
       });
@@ -90,8 +92,8 @@ const Proposals = () => {
 
     try {
       const { request } = await prepareWriteContract({
-        address: deployedContractData?.address,
-        abi: deployedContractData?.abi as Abi,
+        address: CONGRESS_CONTRACT_ADDRESS,
+        abi: congressAbi as Abi,
         functionName: "createProposal",
         args: [title, description, parseInt(durationInDays)],
       });

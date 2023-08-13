@@ -2,11 +2,12 @@ import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import LoadingPage from "./LoadingPage";
+import { toast } from "react-hot-toast";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
 import { readContract } from "wagmi/actions";
-import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
-import { getContractNames } from "~~/utils/scaffold-eth/contractNames";
+import vestingAbi from "~~/utils/abi/vestingAbi";
+import { VESTING_CONTRACT_ADDRESS } from "~~/utils/constants";
 
 const Protected = ({ children }: any) => {
   const router = useRouter();
@@ -17,10 +18,6 @@ const Protected = ({ children }: any) => {
   const [hasNFT, setHasNFT] = useState(true);
   const [hasVesting, setHasVesting] = useState(true);
 
-  const [, , TokenVesting] = getContractNames();
-
-  const { data: deployedContractData, isLoading: deployedContractLoading } = useDeployedContractInfo(TokenVesting);
-
   const verifyNFT = () => {
     /**
      * This function will verify if the user has the NFT
@@ -30,21 +27,27 @@ const Protected = ({ children }: any) => {
   };
 
   const verifyVesting = useCallback(async () => {
-    if (!deployedContractData || !address) return false;
+    if (!address) return false;
     /**
      * This function verifies if the user has an active vesting schedule
      */
-    const data = await readContract({
-      address: deployedContractData?.address,
-      abi: deployedContractData?.abi as Abi,
-      functionName: "getClaim",
-      args: [address],
-    });
 
-    const { isActive } = data as { isActive: boolean };
+    try {
+      const data = await readContract({
+        address: VESTING_CONTRACT_ADDRESS,
+        abi: vestingAbi as Abi,
+        functionName: "getClaim",
+        args: [address],
+      });
 
-    return isActive;
-  }, [address, deployedContractData]);
+      const { isActive } = data as { isActive: boolean };
+
+      return isActive;
+    } catch (err) {
+      toast.error("Something went wrong");
+      return false;
+    }
+  }, [address]);
 
   const authCheck = useCallback(
     async (url: string) => {
@@ -87,7 +90,7 @@ const Protected = ({ children }: any) => {
     };
   }, [authCheck, router.asPath, router.events]);
 
-  if (isLoading || deployedContractLoading) return <LoadingPage />;
+  if (isLoading) return <LoadingPage />;
 
   if (!address) {
     return (
@@ -132,7 +135,7 @@ const Protected = ({ children }: any) => {
           </div>
           <div className="flex flex-col items-center w-full gap-6">
             <Link
-              href="/marketplace"
+              href="/mint"
               type="button"
               className="bg-purple-600 text-white text-2xl px-4 py-2 rounded hover:bg-purple-700 text-center w-96 m-auto mt-10"
             >
@@ -151,7 +154,7 @@ const Protected = ({ children }: any) => {
       </div>
     );
   }
-  console.log({ hasVesting });
+
   if (!hasVesting) {
     return (
       <div className="flex items-center flex-col flex-grow pt-24 max-w-5xl w-full m-auto h-full ">
